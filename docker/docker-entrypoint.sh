@@ -37,10 +37,12 @@ fi
 if [[ ! -f "$HOME/.ovo/yunzai.ok" ]]; then
     set -e
     echo -e "\n ================ \n ${Info} ${GreenBG} 更新 Miao-Yunzai 运行依赖 ${Font} \n ================ \n"
-    pnpm install -P
+    pnpm install
     touch ~/.ovo/yunzai.ok
     set +e
 fi
+
+rm -rf trss.js
 
 echo -e "\n ================ \n ${Version} ${BlueBG} Miao-Yunzai 版本信息 ${Font} \n ================ \n"
 
@@ -71,7 +73,7 @@ if [ -d $MIAO_PLUGIN_PATH"/.git" ]; then
     if [[ ! -f "$HOME/.ovo/miao.ok" ]]; then
         set -e
         echo -e "\n ================ \n ${Info} ${GreenBG} 更新 喵喵插件 运行依赖 ${Font} \n ================ \n"
-        pnpm install -P
+        pnpm install
         touch ~/.ovo/miao.ok
         set +e
     fi
@@ -132,6 +134,7 @@ if [ -d $XIAOYAO_CVS_PATH"/.git" ]; then
     if [[ ! -f "$HOME/.ovo/xiaoyao.ok" ]]; then
         set -e
         echo -e "\n ================ \n ${Info} ${GreenBG} 更新 xiaoyao-cvs 插件运行依赖 ${Font} \n ================ \n"
+	pnpm install
         pnpm add promise-retry superagent -w
         touch ~/.ovo/xiaoyao.ok
         set +e

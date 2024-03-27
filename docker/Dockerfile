@@ -1,12 +1,13 @@
 FROM busybox:latest AS resource
 
 COPY docker-entrypoint.sh /res/entrypoint.sh
+COPY ffmpeg-git-arm64-static.tar.xz .
 
 RUN dos2unix /res/entrypoint.sh \
     && chmod +x /res/entrypoint.sh
 
 
-FROM node:lts-bullseye-slim AS runtime
+FROM node:18-bullseye-slim AS runtime
 
 ARG BUNDLE_FFMPEG true
 ARG BUNDLE_POETRY true
@@ -16,8 +17,8 @@ ARG USE_PYPI_MIRROR true
 ARG REPO_URL https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git
 ARG REPO_BRANCH master
 
-RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-true} \
-    && export BUNDLE_POETRY=${BUNDLE_POETRY:-true} \
+RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-false} \
+    && export BUNDLE_POETRY=${BUNDLE_POETRY:-false} \
     && export USE_APT_MIRROR=${USE_APT_MIRROR:-true} \
     && export USE_NPM_MIRROR=${USE_NPM_MIRROR:-true} \
     && export USE_PYPI_MIRROR=${USE_PYPI_MIRROR:-true} \
@@ -28,7 +29,6 @@ RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-true} \
     && apt-get upgrade -y \
     && apt-get install -y wget xz-utils dos2unix \
     && ((test "$BUNDLE_FFMPEG"x = "true"x \
-    && wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-$(dpkg --print-architecture)-static.tar.xz \
     && mkdir -p /res/ffmpeg \
     && tar -xvf ./ffmpeg-git-$(dpkg --print-architecture)-static.tar.xz -C /res/ffmpeg --strip-components 1 \
     && cp /res/ffmpeg/ffmpeg /usr/bin/ffmpeg \
@@ -49,7 +49,7 @@ RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-true} \
     \
     && _NPM_MIRROR_FLAG="" \
     && if [ "$USE_NPM_MIRROR"x = "true"x ]; then _NPM_MIRROR_FLAG="--registry=https://registry.npmmirror.com"; fi \
-    && npm install pnpm -g $_NPM_MIRROR_FLAG \
+    && npm install pnpm@7.30.0 -g $_NPM_MIRROR_FLAG \
     \
     && ((test "$BUNDLE_POETRY"x = "true"x \
     && apt-get update \

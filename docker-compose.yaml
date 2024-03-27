@@ -2,14 +2,7 @@ version: "3"
 services:
   miao-yunzai:
     container_name: miao-yunzai
-    build:                                                              # 使用 Dockerfile 本地构建
-      context: ./docker
-      args:
-        BUNDLE_FFMPEG: 'false'                                            # 是否在构建时打包 ffmpeg
-        BUNDLE_POETRY: 'false'                                            # 是否在构建时打包 poetry
-        USE_APT_MIRROR: 'true'                                            # 是否在构建时使用 apt 镜像
-        USE_NPM_MIRROR: 'true'                                            # 是否在构建时使用 npm 镜像
-        USE_PYPI_MIRROR: 'true'                                           # 是否在构建时使用 pypi 镜像
+    image: miao-yunzai:20240327
     restart: always
     # ports:
     #   - "50831:50831"                                                 # 映射锅巴插件端口，格式"主机端口:容器内部端口"
@@ -27,6 +20,9 @@ services:
       # - ./yunzai/plugins/xiaoyao-cvs-plugin:/app/Miao-Yunzai/plugins/xiaoyao-cvs-plugin    # 图鉴插件
       #### [警告] 受云崽架构和docker特性限制，使用锅巴插件安装的插件无法持久化，销毁容器后新安装的插件会消失，请谨慎使用 ####
       # - ./yunzai/plugins/Guoba-Plugin:/app/Miao-Yunzai/plugins/Guoba-Plugin                # 锅巴插件
+      - ./yunzai/plugins/yenai-plugin:/app/Miao-Yunzai/plugins/yenai-plugin
+      - ./yunzai/plugins/Lain-plugin:/app/Miao-Yunzai/plugins/Lain-plugin
+      - ./yunzai/plugins/xiaoyao-cvs-plugin:/app/Miao-Yunzai/plugins/xiaoyao-cvs-plugin
     depends_on:
       redis: { condition: service_healthy }
     deploy:
