@@ -6,7 +6,7 @@ RUN dos2unix /res/entrypoint.sh \
     && chmod +x /res/entrypoint.sh
 
 
-FROM node:lts-bullseye-slim AS runtime
+FROM node:18-bullseye-slim AS runtime
 
 ARG BUNDLE_FFMPEG true
 ARG BUNDLE_POETRY true
@@ -49,7 +49,7 @@ RUN export BUNDLE_FFMPEG=${BUNDLE_FFMPEG:-true} \
     \
     && _NPM_MIRROR_FLAG="" \
     && if [ "$USE_NPM_MIRROR"x = "true"x ]; then _NPM_MIRROR_FLAG="--registry=https://registry.npmmirror.com"; fi \
-    && npm install pnpm -g $_NPM_MIRROR_FLAG \
+    && npm install pnpm@7.30.0 -g $_NPM_MIRROR_FLAG \
     \
     && ((test "$BUNDLE_POETRY"x = "true"x \
     && apt-get update \
@@ -83,6 +83,7 @@ RUN REPO_URL=${REPO_URL:-"https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git"} \
     && if [ "$USE_NPM_MIRROR"x = "true"x ]; then _NPM_MIRROR_FLAG="--registry=https://registry.npmmirror.com"; fi \
     && git clone --depth=1 --branch $REPO_BRANCH $REPO_URL /app/Miao-Yunzai \
     && cd /app/Miao-Yunzai \
+    && rm -f /app/Miao-Yunzai/trss.js \
     && sed -i 's/127.0.0.1/redis/g' ./config/default_config/redis.yaml \
     && pnpm install -P $_NPM_MIRROR_FLAG \
     && git remote set-url origin https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git
